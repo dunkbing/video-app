@@ -16,6 +16,7 @@ import (
 func main() {
 	configs.InitLog()
 	configs.LoadEnv()
+	cfg := configs.GetConfig()
 	db.ConnectDB()
 	_, _ = db.GetCollection(db.VideoColl).
 		Indexes().
@@ -34,7 +35,8 @@ func main() {
 	go _crawler.Start()
 	r := gin.Default()
 	r.Use(func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
+		origin := cfg.CorsOrigin
+		c.Header("Access-Control-Allow-Origin", origin)
 		c.Header("Access-Control-Allow-Credentials", "true")
 		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")

@@ -6,7 +6,8 @@ import (
 )
 
 type Config struct {
-	DbUri string
+	DbUri      string
+	CorsOrigin string
 }
 
 var config *Config
@@ -15,7 +16,8 @@ func LoadEnv() {
 	_ = godotenv.Load()
 	if config == nil {
 		config = &Config{
-			DbUri: os.Getenv("MONGO_URI"),
+			DbUri:      os.Getenv("MONGO_URI"),
+			CorsOrigin: os.Getenv("CORS_ORIGIN"),
 		}
 	}
 }
