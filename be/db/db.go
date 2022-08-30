@@ -42,3 +42,5 @@ func GetCollection(collectionName string) *mongo.Collection {
 	collection := Client.Database("golangAPI").Collection(collectionName)
 	return collection
 }
+
+const VideoColl = "videos"

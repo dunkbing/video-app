@@ -9,6 +9,7 @@ import (
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 	"strings"
 	"time"
@@ -34,7 +35,7 @@ func NewCrawler() *crawler {
 
 func (c *crawler) Crawl() {
 	baseUrl := "https://spankbang.com"
-	videoColl := db.GetCollection("videos")
+	videoColl := db.GetCollection(db.VideoColl)
 	c.collector.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("X-Requested-With", "XMLHttpRequest")
 		r.Headers.Set("Referer", baseUrl)
@@ -52,13 +53,15 @@ func (c *crawler) Crawl() {
 
 	vidListSel := "#browse_new > div > div > div.video-list.video-rotate.video-list-with-ads"
 	lastPageSel := "#browse_new > div > div > div.pagination > ul > li:nth-child(6) > a"
-	c.collector.OnHTML(lastPageSel, func(lastPageEl *colly.HTMLElement) {
-		totalPage, err := strconv.Atoi(lastPageEl.Text)
-		logrus.Info("Total page: ", totalPage)
-		if err == nil {
-			c.totalPage = totalPage
-		}
-	})
+	if c.page == 1 {
+		c.collector.OnHTML(lastPageSel, func(lastPageEl *colly.HTMLElement) {
+			totalPage, err := strconv.Atoi(lastPageEl.Text)
+			logrus.Info("Total page: ", totalPage)
+			if err == nil {
+				c.totalPage = totalPage
+			}
+		})
+	}
 	c.collector.OnHTML(vidListSel, func(vidListEl *colly.HTMLElement) {
 		vidItemSel := ".video-item"
 		vidListEl.ForEach(vidItemSel, func(index int, vidItemEl *colly.HTMLElement) {
@@ -94,6 +97,23 @@ func (c *crawler) Crawl() {
 			videoPage.Wait()
 			if video.Id != "--" {
 				logrus.Info("Crawled video: ", video)
+
+				var existedVid model.Video
+				ctx := context.Background()
+				err = videoColl.FindOne(ctx, bson.M{"index": index}).Decode(&existedVid)
+				if err == mongo.ErrNoDocuments {
+					existedVid = model.Video{
+						Id:        "",
+						Title:     "",
+						Thumbnail: "",
+						Duration:  "",
+						Index:     c.videoIndex,
+					}
+					_, err := videoColl.InsertOne(ctx, existedVid)
+					if err != nil {
+						logrus.Error("Insert video error: ", err.Error())
+					}
+				}
 				update := bson.M{
 					"id":        video.Id,
 					"title":     video.Title,
@@ -107,13 +127,14 @@ func (c *crawler) Crawl() {
 					c.videoIndex++
 				}
 			}
-			time.Sleep(time.Second * 4)
+			time.Sleep(time.Second * 5)
 		})
 	})
 	c.collector.OnScraped(func(r *colly.Response) {
 		fmt.Println("Finished", r.Request.URL)
 	})
 	for c.page <= c.totalPage {
+		logrus.Info("Crawling page: ", c.page)
 		url := fmt.Sprintf("%s/trending_videos/%v", baseUrl, c.page)
 		err := c.collector.Visit(url)
 		if err != nil {
@@ -121,7 +142,7 @@ func (c *crawler) Crawl() {
 		}
 		c.collector.Wait()
 		c.page++
-		fmt.Println("Done...!")
+		logrus.Info("Crawled page: ", c.page)
 	}
 }
 
@@ -131,7 +152,7 @@ func (c *crawler) Start() {
 	_, _ = job.AddFunc("* * * * *", func() {
 		fmt.Println("Job is running")
 	})
-	crawlInterval := "*/30 * * * *"
+	crawlInterval := "0 */2 * * *"
 	_, _ = job.AddFunc(crawlInterval, func() {
 		c.Crawl()
 	})

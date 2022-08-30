@@ -10,7 +10,7 @@ import (
 )
 
 func SeedVideos() {
-	videoColl := GetCollection("videos")
+	videoColl := GetCollection(VideoColl)
 	index := 1
 	for index <= 4000 {
 		logrus.Info("Seeding ", index)
