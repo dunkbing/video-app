@@ -6,8 +6,18 @@
 }
 
 body {
-  background: #090A0E;
+  background: #090a0e;
   color: white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }
 
 .container {
@@ -58,7 +68,7 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  color: #0F1014;
+  color: #0f1014;
   background: #c1c1c1;
   font-size: 20px;
   font-weight: bold;
@@ -68,7 +78,7 @@ body {
   position: absolute;
   top: 5px;
   right: 5px;
-  background: #0F1014;
+  background: #0f1014;
   padding: 2px 8px;
   border-radius: 5px;
 }
@@ -108,10 +118,10 @@ body {
 }
 
 .hero .button {
-  background: #0F1014;
+  background: #0f1014;
   color: white;
   text-decoration: none;
-  border: 1px solid white; 
+  border: 1px solid white;
   /* Сплоная, это как? В форме слоника?) */
   padding: 10px 15px;
   cursor: pointer;
@@ -120,7 +130,7 @@ body {
 
 .hero .button:hover {
   background: #a0acdf;
-  color: #0F1014;
+  color: #0f1014;
 }
 
 .youtube-container {
@@ -161,73 +171,73 @@ button:hover {
 }
 
 @media screen and (min-width: 300px) and (max-width: 800px) {
-.page-type-current, button {
-  padding: 10px 15px;
-}
+  .page-type-current,
+  button {
+    padding: 10px 15px;
+  }
 
-.App {
-  overflow: hidden;
-}
+  .App {
+    overflow: hidden;
+  }
 
-.hero .button {
-  padding: 15px 15px;
-}
+  .hero .button {
+    padding: 15px 15px;
+  }
 
-.header form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 5px 5px;
-}
+  .header form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 5px 5px;
+  }
 
-.header h1 {
-  font-size: 50px;
-}
+  .header h1 {
+    font-size: 50px;
+  }
 
-.header form input {
-  margin-right: 35px;
-  position: relative;
-  top: 20px;
-  height: 25px;
-  font-size: 15px;
-}
+  .header form input {
+    margin-right: 35px;
+    position: relative;
+    top: 20px;
+    height: 25px;
+    font-size: 15px;
+  }
 
-.search {
-  padding: 20px;
-  font-size: 25px;
-}
+  .search {
+    padding: 20px;
+    font-size: 25px;
+  }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
-.content .button {
-  position: absolute;
-  bottom: -35px !important;
-}
+  .content .button {
+    position: absolute;
+    bottom: -35px !important;
+  }
 
-.hero .title {
-  text-align: center;
-  font-size: 55px;
-  text-shadow: 2px 2px 1px black;
-}
+  .hero .title {
+    text-align: center;
+    font-size: 55px;
+    text-shadow: 2px 2px 1px black;
+  }
 
-.btn-load-more {
-  left: 15%;
-  bottom: -50px;
-}
+  .btn-load-more {
+    left: 15%;
+    bottom: -50px;
+  }
 
-.movie-title {
-  font-size: 30px;
-}
+  .movie-title {
+    font-size: 30px;
+  }
 
-.movie-vote {
-  padding: 5px 5px;
-  font-size: 30px;
-}
-
+  .movie-vote {
+    padding: 5px 5px;
+    font-size: 30px;
+  }
 }
