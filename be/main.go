@@ -16,7 +16,7 @@ func main() {
 	db.ConnectDB()
 	_crawler := crawler.NewCrawler()
 	fmt.Println(_crawler)
-	//go _crawler.Start()
+	go _crawler.Start()
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

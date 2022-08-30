@@ -53,15 +53,16 @@ func (c *crawler) Crawl() {
 
 	vidListSel := "#browse_new > div > div > div.video-list.video-rotate.video-list-with-ads"
 	lastPageSel := "#browse_new > div > div > div.pagination > ul > li:nth-child(6) > a"
-	if c.page == 1 {
-		c.collector.OnHTML(lastPageSel, func(lastPageEl *colly.HTMLElement) {
+	c.collector.OnHTML(lastPageSel, func(lastPageEl *colly.HTMLElement) {
+		if c.page == 1 {
 			totalPage, err := strconv.Atoi(lastPageEl.Text)
 			logrus.Info("Total page: ", totalPage)
 			if err == nil {
 				c.totalPage = totalPage
 			}
-		})
-	}
+		}
+	})
+
 	c.collector.OnHTML(vidListSel, func(vidListEl *colly.HTMLElement) {
 		vidItemSel := ".video-item"
 		vidListEl.ForEach(vidItemSel, func(index int, vidItemEl *colly.HTMLElement) {
@@ -152,7 +153,7 @@ func (c *crawler) Start() {
 	_, _ = job.AddFunc("* * * * *", func() {
 		fmt.Println("Job is running")
 	})
-	crawlInterval := "0 */2 * * *"
+	crawlInterval := "0 */3 * * *"
 	_, _ = job.AddFunc(crawlInterval, func() {
 		c.Crawl()
 	})
