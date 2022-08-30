@@ -1,16 +1,18 @@
-import React from "react"
+import React from "react";
 
 export type Video = {
-  id: string
-  title: string
-  thumbnail: string
-  duration: string
-  src: string
+  id: string;
+  title: string;
+  thumbnail: string;
+  duration: string;
+  src: string;
+  names: string;
+  tags: string;
 };
 
 type Props = {
-  movie: Video
-  selectMovie: (movie: Video) => void
+  movie: Video;
+  selectMovie: (movie: Video) => void;
 };
 
 const MovieCard = ({ movie, selectMovie }: Props) => {
@@ -19,14 +21,14 @@ const MovieCard = ({ movie, selectMovie }: Props) => {
       {movie.thumbnail ? (
         <img className="movie-cover" src={movie.thumbnail} alt={movie.title} />
       ) : (
-        <div className="movie-placeholder">No Image Found</div>
+        <div className="movie-placeholder">Không thể hiển thị ảnh</div>
       )}
       <h2 className="movie-title">{movie.title}</h2>
       <p className="movie-vote" title={`Duration: ${movie.duration}`}>
         {movie.duration}
       </p>
     </div>
-  )
-}
+  );
+};
 
-export { MovieCard }
+export { MovieCard };

@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 type Props = {
   searchMovies: React.FormEventHandler<HTMLFormElement>;
@@ -14,5 +14,5 @@ export function Header({ searchMovies, setSearchKey }: Props) {
         <button type="submit">Search</button>
       </form>
     </header>
-  )
+  );
 }

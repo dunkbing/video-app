@@ -85,6 +85,36 @@ func (c *crawler) Crawl() {
 				video.Title = title
 				video.Thumbnail = thumbnail
 			})
+			starSel := "#video > div.left > div.info > section.details > div > div:nth-child(4)"
+			videoPage.OnHTML(starSel, func(starEl *colly.HTMLElement) {
+				starText := starEl.ChildText("span")
+				logrus.Info("Span starText: ", starText)
+				if starText == "Pornstar:" {
+					var names []string
+					starEl.ForEach("div a", func(i int, aEl *colly.HTMLElement) {
+						names = append(names, aEl.Text)
+					})
+					video.Names = strings.Join(names, "|")
+
+				} else if starText == "Tags:" {
+					var tags []string
+					starEl.ForEach("div a", func(i int, aEl *colly.HTMLElement) {
+						tags = append(tags, aEl.Text)
+					})
+					video.Tags = strings.Join(tags, "|")
+				}
+			})
+			tagSel := "#video > div.left > div.info > section.details > div > div:nth-child(5)"
+			videoPage.OnHTML(tagSel, func(tagEl *colly.HTMLElement) {
+				if tagEl == nil {
+					return
+				}
+				var tags []string
+				tagEl.ForEach("div a", func(i int, aEl *colly.HTMLElement) {
+					tags = append(tags, aEl.Text)
+				})
+				video.Tags = strings.Join(tags, "|")
+			})
 			videoLink := vidItemEl.ChildAttr("a.thumb", "href")
 			linkChunks := strings.Split(videoLink, "/")
 			if len(linkChunks) > 1 {
@@ -120,6 +150,8 @@ func (c *crawler) Crawl() {
 					"title":     video.Title,
 					"thumbnail": video.Thumbnail,
 					"duration":  video.Duration,
+					"names":     video.Names,
+					"tags":      video.Tags,
 				}
 				_, err := videoColl.UpdateOne(context.Background(), bson.M{"index": c.videoIndex}, bson.M{"$set": update})
 				if err != nil {
@@ -128,7 +160,7 @@ func (c *crawler) Crawl() {
 					c.videoIndex++
 				}
 			}
-			time.Sleep(time.Second * 5)
+			time.Sleep(time.Second * 8)
 		})
 	})
 	c.collector.OnScraped(func(r *colly.Response) {
@@ -150,10 +182,7 @@ func (c *crawler) Crawl() {
 func (c *crawler) Start() {
 	c.Crawl()
 	job := cron.New()
-	_, _ = job.AddFunc("* * * * *", func() {
-		fmt.Println("Job is running")
-	})
-	crawlInterval := "0 */3 * * *"
+	crawlInterval := "0 */4 * * *"
 	_, _ = job.AddFunc(crawlInterval, func() {
 		c.Crawl()
 	})

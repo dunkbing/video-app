@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"math"
 	"net/http"
 	"strconv"
 )
@@ -19,13 +20,21 @@ func GetVideos(c *gin.Context) {
 		})
 	}
 	limit := 40
+	query := c.DefaultQuery("query", "")
 
 	videoColl := db.GetCollection(db.VideoColl)
 	pageOptions := options.Find()
 	pageOptions.SetSkip(int64(limit * (page - 1)))
 	pageOptions.SetLimit(int64(limit))
+
+	filterOptions := bson.D{{}}
+	if query != "" {
+		filterOptions = bson.D{{"$text", bson.D{{"$search", query}}}}
+	}
+
 	ctx := c.Request.Context()
-	cur, err := videoColl.Find(ctx, bson.D{{}}, pageOptions)
+	cur, err := videoColl.Find(ctx, filterOptions, pageOptions)
+	count, err := videoColl.CountDocuments(ctx, filterOptions)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -55,6 +64,11 @@ func GetVideos(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    videos,
+		"data": gin.H{
+			"items":       videos,
+			"totalPages":  math.Ceil(float64(count) / float64(limit)),
+			"total":       count,
+			"currentPage": page,
+		},
 	})
 }

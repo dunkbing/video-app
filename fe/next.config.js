@@ -2,12 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [
-      "picsum.photos",
-      "s2.coinmarketcap.com",
-      "s3.coinmarketcap.com",
-      "cdn.pixabay.com",
-    ],
+    domains: ["tb-lb.sb-cd.com"],
   },
   publicRuntimeConfig: {
     apiUrl: process.env.API_URL,

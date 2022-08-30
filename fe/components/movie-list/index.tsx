@@ -1,34 +1,65 @@
-import React from "react"
-import { Video, MovieCard } from "../movie-card"
+import React, { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
+import { Video, MovieCard } from "../movie-card";
+import { apiHelper, WithPagination } from "../../api";
 
 type Props = {
-  movies: any[]
-  isLoadMoreAvailable: boolean
-  selectMovie: (movie: Video) => void
-  onLoadMore: () => void
+  query?: string;
+  selectMovie: (movie: Video) => void;
 };
 
-export function MovieList({
-  movies,
-  selectMovie,
-  onLoadMore,
-  isLoadMoreAvailable,
-}: Props) {
-  const renderMovies = () => {
-    return movies.map((movie) => {
-      return (
-        <MovieCard key={movie.id} movie={movie} selectMovie={selectMovie} />
-      )
-    })
-  }
+const MovieList: React.FC<Props> = ({ query, selectMovie }: Props) => {
+  const [videos, setVideos] = useState<WithPagination<Video>>({
+    items: [],
+    totalPages: 0,
+    currentPage: 0,
+    total: 0,
+  });
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    async function callApi() {
+      const params = query ? { query, page } : { page };
+      const { data } = await apiHelper.get<WithPagination<Video>>(
+        "/videos",
+        params
+      );
+      console.log("videos", data);
+      selectMovie(data.items[0]);
+      setVideos(data);
+    }
+    void callApi();
+  }, [page, query]);
+
   return (
-    <div className="container">
-      {renderMovies()}
-      {isLoadMoreAvailable && (
-        <button type="button" className="btn-load-more" onClick={onLoadMore}>
-          LOAD MORE
-        </button>
-      )}
-    </div>
-  )
-}
+    <>
+      <div className="container">
+        {videos.items.map((video) => (
+          <MovieCard
+            key={`${video.id}-${video.title}`}
+            movie={video}
+            selectMovie={selectMovie}
+          />
+        ))}
+      </div>
+      <div id="react-paginate">
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          breakLabel={"..."}
+          breakClassName={"break-me"}
+          pageCount={videos.totalPages}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={({ selected }) => {
+            console.log(selected);
+            setPage(selected + 1);
+          }}
+          containerClassName={"pagination"}
+          activeClassName={"active"}
+        />
+      </div>
+    </>
+  );
+};
+
+export default React.memo(MovieList);
