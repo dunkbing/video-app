@@ -186,5 +186,6 @@ func (c *crawler) Start() {
 	_, _ = job.AddFunc(crawlInterval, func() {
 		c.Crawl()
 	})
+	job.Entries()
 	job.Start()
 }
