@@ -2,7 +2,6 @@
   "name": "video-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/dunkbing/p0rn-video-app",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
