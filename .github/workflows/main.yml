@@ -1,16 +1,13 @@
 name: Deployment
 on: [push]
-env:
-  FLY_API_TOKEN: ${{secrets.FLY_API_TOKEN}}
 jobs:
   deploy:
+    environment: production
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     name: Deploy be
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - uses: datamonsters/replace-action
-        with:
-          files: 'be/fly.toml'
-          replacements: '$MONGO_URI=${{secrets.MONGO_URI}},$CORS_ORIGIN=${{secrets.MONGO_URI}}'
       - run: flyctl deploy be --remote-only

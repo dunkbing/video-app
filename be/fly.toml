@@ -11,8 +11,6 @@ processes = []
 
 [env]
   PORT = "8080"
-  MONGO_URI = "$MONGO_URI"
-  CORS_ORIGIN = "$CORS_ORIGIN"
   GIN_MODE = "release"
 
 [experimental]
