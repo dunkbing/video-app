@@ -1,4 +1,5 @@
-import React from "react";
+import React from "react"
+import Image from "next/image"
 
 export type Video = {
   id: string;
@@ -19,7 +20,8 @@ const MovieCard = ({ movie, selectMovie }: Props) => {
   return (
     <div className="movie-container" onClick={() => selectMovie(movie)}>
       {movie.thumbnail ? (
-        <img className="movie-cover" src={movie.thumbnail} alt={movie.title} />
+        // <img className="movie-cover" src={movie.thumbnail} alt={movie.title} />
+        <Image className="movie-cover" src={movie.thumbnail} alt={movie.title} width="200vh" height="200vh" />
       ) : (
         <div className="movie-placeholder">Không thể hiển thị ảnh</div>
       )}
@@ -28,7 +30,7 @@ const MovieCard = ({ movie, selectMovie }: Props) => {
         {movie.duration}
       </p>
     </div>
-  );
-};
+  )
+}
 
-export { MovieCard };
+export { MovieCard }

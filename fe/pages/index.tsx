@@ -1,20 +1,24 @@
-import React, { useCallback, useState } from "react";
-import MovieList from "@components/movie-list";
-import { Header } from "@components/header";
-import { Video } from "@components/movie-card";
+import React, { useCallback, useState } from "react"
+import MovieList from "@components/movie-list"
+import { Header } from "@components/header"
+import { Video } from "@components/movie-card"
 
 function Home() {
-  const [searchKey, setSearchKey] = useState("");
-  const [selectedMovie, setSelectedMovie] = useState<Video | null>(null);
-  const [playing, setPlaying] = useState(false);
+  const [searchKey, setSearchKey] = useState("")
+  const [selectedMovie, setSelectedMovie] = useState<Video | null>(null)
+  const [playing, setPlaying] = useState(false)
 
   const selectMovie = useCallback(async (video: Video) => {
-    setSelectedMovie(video);
-    setPlaying(false);
-  }, []);
+    setSelectedMovie(video)
+    setPlaying(false)
+    window?.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    })
+  }, [])
 
   const renderVideo = (video: Video | null) => {
-    if (!video) return null;
+    if (!video) return null
     return (
       <iframe
         title={video.title}
@@ -25,17 +29,17 @@ function Home() {
         scrolling="no"
         allowFullScreen
       />
-    );
-  };
+    )
+  }
 
   const searchMovies = async (e: React.FormEvent) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   return (
     <div className="App">
-      <Header searchMovies={searchMovies} setSearchKey={setSearchKey} />
-      <div
+      <Header searchMovies={searchMovies} onSearch={setSearchKey} />
+      {selectedMovie && <div
         className="hero"
         style={
           !playing
@@ -55,7 +59,7 @@ function Home() {
         ) : (
           renderVideo(selectedMovie)
         )}
-      </div>
+      </div>}
       <div className="content">
         <h2 className="title">{selectedMovie?.title}</h2>
         {selectedMovie?.tags && (
@@ -85,7 +89,7 @@ function Home() {
       </div>
       <MovieList selectMovie={selectMovie} query={searchKey} />
     </div>
-  );
+  )
 }
 
-export default Home;
+export default Home

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import { Video, MovieCard } from "../movie-card";
-import { apiHelper, WithPagination } from "../../api";
+import React, { useEffect, useState } from "react"
+import ReactPaginate from "react-paginate"
+import { Video, MovieCard } from "../movie-card"
+import { apiHelper, WithPagination } from "../../api"
 
 type Props = {
-  query?: string;
-  selectMovie: (movie: Video) => void;
+  query?: string
+  selectMovie: (movie: Video) => void
 };
 
 const MovieList: React.FC<Props> = ({ query, selectMovie }: Props) => {
@@ -14,26 +14,27 @@ const MovieList: React.FC<Props> = ({ query, selectMovie }: Props) => {
     totalPages: 0,
     currentPage: 0,
     total: 0,
-  });
-  const [page, setPage] = useState(1);
+  })
+  const [page, setPage] = useState(1)
   useEffect(() => {
     async function callApi() {
-      const params = query ? { query, page } : { page };
+      const params = query ? { query, page } : { page }
       const { data } = await apiHelper.get<WithPagination<Video>>(
         "/videos",
-        params
-      );
-      console.log("videos", data);
-      selectMovie(data.items[0]);
-      setVideos(data);
+        params,
+      )
+      console.log("videos", data)
+      if (data.items) {
+        setVideos(data)
+      }
     }
-    void callApi();
-  }, [page, query]);
+    void callApi()
+  }, [page, query, selectMovie])
 
   return (
     <>
       <div className="container">
-        {videos.items.map((video) => (
+        {videos?.items?.map((video) => (
           <MovieCard
             key={`${video.id}-${video.title}`}
             movie={video}
@@ -51,15 +52,15 @@ const MovieList: React.FC<Props> = ({ query, selectMovie }: Props) => {
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
           onPageChange={({ selected }) => {
-            console.log(selected);
-            setPage(selected + 1);
+            console.log(selected)
+            setPage(selected + 1)
           }}
           containerClassName={"pagination"}
           activeClassName={"active"}
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default React.memo(MovieList);
+export default React.memo(MovieList)
