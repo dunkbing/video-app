@@ -34,6 +34,8 @@ func NewCrawler() *crawler {
 }
 
 func (c *crawler) Crawl() {
+	logrus.Info("Start crawling....")
+	start := time.Now()
 	baseUrl := "https://spankbang.com"
 	videoColl := db.GetCollection(db.VideoColl)
 	c.collector.OnRequest(func(r *colly.Request) {
@@ -177,6 +179,8 @@ func (c *crawler) Crawl() {
 		c.page++
 		logrus.Info("Crawled page: ", c.page)
 	}
+	elapsed := time.Since(start)
+	logrus.Info("Done crawling. Took ", elapsed.Minutes())
 }
 
 func (c *crawler) Start() {
