@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+const baseUrl = "https://spankbang.com"
+
 type crawler struct {
 	collector  *colly.Collector
 	page       int
@@ -33,10 +35,7 @@ func NewCrawler() *crawler {
 	}
 }
 
-func (c *crawler) Crawl() {
-	logrus.Info("Start crawling....")
-	start := time.Now()
-	baseUrl := "https://spankbang.com"
+func (c *crawler) Init() {
 	videoColl := db.GetCollection(db.VideoColl)
 	c.collector.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("X-Requested-With", "XMLHttpRequest")
@@ -168,6 +167,11 @@ func (c *crawler) Crawl() {
 	c.collector.OnScraped(func(r *colly.Response) {
 		fmt.Println("Finished", r.Request.URL)
 	})
+}
+
+func (c *crawler) Crawl() {
+	logrus.Info("Start crawling....")
+	start := time.Now()
 	for c.page <= c.totalPage {
 		logrus.Info("Crawling page: ", c.page)
 		url := fmt.Sprintf("%s/trending_videos/%v", baseUrl, c.page)
@@ -180,13 +184,14 @@ func (c *crawler) Crawl() {
 		logrus.Info("Crawled page: ", c.page)
 	}
 	elapsed := time.Since(start)
-	logrus.Info("Done crawling. Took ", elapsed.Minutes())
+	logrus.Info("Done crawling. Took ", elapsed.Minutes(), " minutes")
 }
 
 func (c *crawler) Start() {
+	c.Init()
 	c.Crawl()
 	job := cron.New()
-	crawlInterval := "0 */4 * * *"
+	crawlInterval := "0 */6 * * *"
 	_, _ = job.AddFunc(crawlInterval, func() {
 		c.Crawl()
 	})
