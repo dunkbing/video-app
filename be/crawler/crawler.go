@@ -185,6 +185,7 @@ func (c *crawler) Crawl() {
 	}
 	elapsed := time.Since(start)
 	logrus.Info("Done crawling. Took ", elapsed.Minutes(), " minutes")
+	c.page = 1
 }
 
 func (c *crawler) Start() {
